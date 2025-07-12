@@ -27,10 +27,10 @@ namespace JobApplicationApi.Controllers
 
         // POST: api/products/checkout
         [HttpPost("checkout")]
-        public async Task<ActionResult<int>> CheckoutProducts()
+        public async Task<ActionResult<int>> CheckoutProducts([FromBody] string basket)
         {
-            var cost = await _service.CheckoutProducts();
-            return Ok(cost);
+            var response = await _service.CheckoutProducts(basket);
+            return Ok(response);
         }
 
 
@@ -63,7 +63,7 @@ namespace JobApplicationApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_service.JobApplicationExists(id))
+                if (!_service.ProductExists(id))
                 {
                     return NotFound();
                 }

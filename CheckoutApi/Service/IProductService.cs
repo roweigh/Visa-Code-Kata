@@ -9,7 +9,7 @@ namespace JobApplicationApi.Service
         Task<ProductDTO> GetProduct(int Id);
         Task<Product> AddProduct(ProductDTO product);
         Task UpdateProduct(int id, ProductDTO product);
-        Task<double> CheckoutProducts();
-        bool JobApplicationExists(int id);
+        Task<double> CheckoutProducts(string basket);
+        bool ProductExists(int id);
     }
 }

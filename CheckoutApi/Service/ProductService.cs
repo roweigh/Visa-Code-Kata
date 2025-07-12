@@ -8,6 +8,7 @@ namespace JobApplicationApi.Service
     {
         private readonly IProductRepository _repository = repository;
 
+        // Generic CRUD operations
         public async Task<IEnumerable<ProductDTO>> GetProducts()
         {
             var products = await _repository.GetAll();
@@ -35,97 +36,66 @@ namespace JobApplicationApi.Service
             return entity;
         }
 
-        public async Task<double> CheckoutProducts()
-        {
-            var scannedProductMap = new Dictionary<string, ScannedProduct>();
-
-            var input = "AAABABBAA";
-
-
-            // Count number of products scanned
-            foreach (var product in input.ToCharArray()) // Split into array of chars?
-            {
-                string productId = product.ToString();
-                if (!scannedProductMap.ContainsKey(productId))
-                {
-
-                    // DEBUG
-                    if (productId == "A")
-                    {
-                        scannedProductMap[productId] = new ScannedProduct
-                        {
-                            Quantity = 1,
-                            Product = new Product
-                            {
-                                Id = 1,
-                                ProductName = "A",
-                                UnitPrice = 0.5,
-                                DiscountQuantity = 3,
-                                DiscountPrice = 1
-                            }
-                        };
-                    }
-                    else if (productId == "B")
-                    {
-                        scannedProductMap[productId] = new ScannedProduct
-                        {
-                            Quantity = 1,
-                            Product = new Product
-                            {
-                                Id = 2,
-                                ProductName = "B",
-                                UnitPrice = 2
-                            }
-                        };
-                    }
-                    // DEBUG OVER
-
-                    // AWAIT GET PRODUCT BY ID
-
-                } else
-                {
-                    scannedProductMap[productId].Quantity += 1;
-                }
-     
-            }
-
-            var result = 0;
-
-            // PRINTING DEBUG
-            foreach (var kvp in scannedProductMap)
-            {
-                string key = kvp.Key;
-                ScannedProduct entry = kvp.Value;
-                Product product = entry.Product;
-
-                Console.WriteLine($"Key: {key}");
-                Console.WriteLine($"  Scanned: {entry.Quantity}");
-                Console.WriteLine($"  Id: {product.Id}");
-                Console.WriteLine($"  UnitCost: {product.UnitPrice}");
-
-                if (product.DiscountQuantity != null)
-                {
-                    Console.WriteLine($"  Discount - Amount: {product.DiscountQuantity}, Cost: {product.DiscountPrice}");
-
-                    var discounted = (int)Math.Floor((double)entry.Quantity / (double)product.DiscountQuantity);
-                    var undiscounted = (entry.Quantity % product.DiscountQuantity) * product.UnitPrice;
-                    Console.WriteLine($"  Discounted Cost: {discounted}, Undiscounted Cost: {undiscounted}");
-                    //result += Math.Floor(entry.scanned / product.discount.amount) * product.discount.cost;
-                }
-                else
-                {
-                    Console.WriteLine("  Discount: None");
-                }
-
-
-            }
-
-            return result;
-        }
-
-        public bool JobApplicationExists(int id)
+        public bool ProductExists(int id)
         {
             return _repository.Exists(id);
+        }
+
+        // Generates total cost of basket based on existence of discounts for each basketed product
+        public async Task<double> CheckoutProducts(string basket)
+        {
+            if (string.IsNullOrWhiteSpace(basket))
+                return 0;
+
+            double total = 0;
+            IEnumerable<Product> products = await _repository.GetAll();
+            Dictionary<string, ScannedProduct> productMap = products.ToDictionary(
+                product => product.ProductName, 
+                product => new ScannedProduct
+                {
+                    Quantity = 0,
+                    Product = product
+                });
+
+            // Count products in basket
+            // Ignores any invalid/unrecognised products
+            foreach (char ch in basket)
+            {
+                string productName = ch.ToString();
+                if (productMap.ContainsKey(productName))
+                {
+                    productMap[productName].Quantity += 1;
+                }
+            }
+
+            // Apply discounts for each product after loading basket
+            foreach (KeyValuePair<string, ScannedProduct> entry in productMap)
+            {
+                Product product = entry.Value.Product;
+                int quantity = entry.Value.Quantity;
+                total += CalculateProductCost(product, quantity);
+            }
+
+            return Math.Round(total, 2);
+        }
+
+        private double CalculateProductCost(Product product, int quantity)
+        {
+            if (quantity <= 0) return 0;
+
+            if (product.DiscountQuantity.HasValue && product.DiscountPrice.HasValue)
+            {
+                int discountQuantity = product.DiscountQuantity.Value;
+                double discountPrice = product.DiscountPrice.Value;
+
+                int discountedSets = quantity / discountQuantity;
+                int remainder = quantity % discountQuantity;
+
+                return (discountedSets * discountPrice) + (remainder * product.UnitPrice);
+            } else
+            {
+                return quantity * product.UnitPrice;
+            }
         }
     }
 }
