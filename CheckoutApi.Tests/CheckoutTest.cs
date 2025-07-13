@@ -15,7 +15,7 @@ public class CheckoutTest
         _service = new ProductService(_mockRepo.Object);
     }
 
-    // Helper function to generate prices indicated by Kata09
+    // Helper function to return db state indicated by Kata09
     private List<Product> GetTestProducts()
     {
         return new List<Product>
@@ -56,7 +56,7 @@ public class CheckoutTest
     [Fact]
     public async Task TestTotals()
     {
-        _mockRepo.Setup(r => r.GetAll()).ReturnsAsync(GetTestProducts());
+        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(GetTestProducts());
 
         Assert.Equal(0, await Price(""));
         Assert.Equal(50, await Price("A"));
@@ -78,7 +78,7 @@ public class CheckoutTest
     [Fact]
     public async Task TestIncremental()
     {
-        _mockRepo.Setup(r => r.GetAll()).ReturnsAsync(GetTestProducts());
+        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(GetTestProducts());
         var scanned = "";
 
         Assert.Equal(0 , await Price(scanned));

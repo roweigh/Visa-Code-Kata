@@ -83,10 +83,12 @@ namespace CheckoutApi.Service
         {
             if (quantity <= 0) return 0;
 
-            if (product.DiscountQuantity.HasValue && product.DiscountPrice.HasValue)
+            var activeDiscount = product.DiscountQuantity.HasValue && product.DiscountPrice.HasValue;
+            if (activeDiscount)
             {
-                int discountQuantity = product.DiscountQuantity.Value;
-                double discountPrice = product.DiscountPrice.Value;
+                // Guaranteed to have values as activeDiscount will be checking to enter this code block
+                int discountQuantity = product.DiscountQuantity!.Value;
+                double discountPrice = product.DiscountPrice!.Value;
 
                 int discountedSets = quantity / discountQuantity;
                 int remainder = quantity % discountQuantity;
