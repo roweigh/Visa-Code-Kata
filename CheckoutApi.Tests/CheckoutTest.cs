@@ -79,13 +79,13 @@ public class CheckoutTest
     public async Task TestIncremental()
     {
         _mockRepo.Setup(r => r.GetAll()).ReturnsAsync(GetTestProducts());
-        
-        double checkout = 0;
-        checkout += await Price(""); Assert.Equal(0 , checkout);
-        checkout += await Price("A"); Assert.Equal(50, checkout);
-        checkout += await Price("B"); Assert.Equal(80, checkout);
-        checkout += await Price("A"); Assert.Equal(130, checkout);
-        checkout += await Price("A"); Assert.Equal(160, checkout);
-        checkout += await Price("B"); Assert.Equal(175, checkout);
+        var scanned = "";
+
+        Assert.Equal(0 , await Price(scanned));
+        scanned += "A"; Assert.Equal(50, await Price(scanned));
+        scanned += "B"; Assert.Equal(80, await Price(scanned));
+        scanned += "A"; Assert.Equal(130, await Price(scanned));
+        scanned += "A"; Assert.Equal(160, await Price(scanned));
+        scanned += "B"; Assert.Equal(175, await Price(scanned));
     }
 }
