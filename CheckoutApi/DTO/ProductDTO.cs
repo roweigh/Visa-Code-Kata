@@ -1,4 +1,4 @@
-﻿namespace JobApplicationApi.DTO
+﻿namespace CheckoutApi.DTO
 {
     public class ProductDTO
     {

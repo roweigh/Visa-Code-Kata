@@ -1,5 +1,5 @@
-﻿using JobApplicationApi.DTO;
-using JobApplicationApi.Models;
+﻿using CheckoutApi.DTO;
+using CheckoutApi.Models;
 
 public static class ProductMapper
 {

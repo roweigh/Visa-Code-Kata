@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace JobApplicationApi.Models
+namespace CheckoutApi.Models
 {
     public class AppDBContext(DbContextOptions<AppDBContext> options) : DbContext(options)
     {

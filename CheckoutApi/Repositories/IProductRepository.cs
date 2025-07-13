@@ -1,6 +1,6 @@
-﻿using JobApplicationApi.Models;
+﻿using CheckoutApi.Models;
 
-namespace JobApplicationApi.Repositories
+namespace CheckoutApi.Repositories
 {
     public interface IProductRepository
     {

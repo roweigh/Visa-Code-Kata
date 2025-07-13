@@ -1,7 +1,7 @@
-﻿using JobApplicationApi.Models;
+﻿using CheckoutApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobApplicationApi.Repositories
+namespace CheckoutApi.Repositories
 {
     public class ProductRepository : IProductRepository
     {

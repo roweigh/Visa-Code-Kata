@@ -1,10 +1,10 @@
-﻿using JobApplicationApi.DTO;
-using JobApplicationApi.Models;
-using JobApplicationApi.Service;
+﻿using CheckoutApi.DTO;
+using CheckoutApi.Models;
+using CheckoutApi.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobApplicationApi.Controllers
+namespace CheckoutApi.Controllers
 {
     [Route("api/products")]
     [ApiController]

@@ -1,8 +1,8 @@
-﻿using JobApplicationApi.DTO;
-using JobApplicationApi.Models;
-using JobApplicationApi.Repositories;
+﻿using CheckoutApi.DTO;
+using CheckoutApi.Models;
+using CheckoutApi.Repositories;
 
-namespace JobApplicationApi.Service
+namespace CheckoutApi.Service
 {
     public class ProductService(IProductRepository repository) : IProductService
     {

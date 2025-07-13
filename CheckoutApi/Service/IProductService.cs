@@ -1,7 +1,7 @@
-﻿using JobApplicationApi.DTO;
-using JobApplicationApi.Models;
+﻿using CheckoutApi.DTO;
+using CheckoutApi.Models;
 
-namespace JobApplicationApi.Service
+namespace CheckoutApi.Service
 {
     public interface IProductService
     {

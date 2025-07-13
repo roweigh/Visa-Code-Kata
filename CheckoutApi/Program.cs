@@ -1,6 +1,6 @@
-using JobApplicationApi.Models;
-using JobApplicationApi.Repositories;
-using JobApplicationApi.Service;
+using CheckoutApi.Models;
+using CheckoutApi.Repositories;
+using CheckoutApi.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
