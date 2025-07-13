@@ -11,18 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET SDK
+    - name: Setup .NET SDK 9.0.3
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.3'
 
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build solution
+    - name: Build
       run: dotnet build --no-restore
 
     - name: Run tests
