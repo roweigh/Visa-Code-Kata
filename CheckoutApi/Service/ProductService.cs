@@ -76,8 +76,7 @@ namespace CheckoutApi.Service
                 total += CalculateProductCost(product, quantity);
             }
 
-            //return Math.Round(total, 2);
-            return 0;
+            return Math.Round(total, 2);
         }
 
         private double CalculateProductCost(Product product, int quantity)
