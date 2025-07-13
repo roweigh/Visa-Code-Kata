@@ -6,7 +6,7 @@ namespace JobApplicationApi.Models
     public class Product
     {
         [Key]
-        public required int Id { get; set; }
+        public int Id { get; set; }
 
         [StringLength(255)]
         [Column(TypeName = "nvarchar(255)")]
