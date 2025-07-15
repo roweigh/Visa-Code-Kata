@@ -41,13 +41,12 @@ namespace CheckoutApi.Service
             return _repository.Exists(id);
         }
 
-        // Generates total cost of basket based on existence of discounts for each basketed product
+        // Generates total cost of basket based on existence of discounts for each product in basket
         public async Task<double> CheckoutProducts(string basket)
         {
             if (string.IsNullOrWhiteSpace(basket))
                 return 0;
 
-            double total = 0;
             IEnumerable<Product> products = await _repository.GetAll();
             Dictionary<string, ScannedProduct> productMap = products.ToDictionary(
                 product => product.ProductName, 
@@ -57,29 +56,38 @@ namespace CheckoutApi.Service
                     Product = product
                 });
 
-            // Count products in basket
-            // Ignores any invalid/unrecognised products
+            double total = 0;
             foreach (char ch in basket)
             {
-                string productName = ch.ToString();
-                if (productMap.ContainsKey(productName))
-                {
-                    productMap[productName].Quantity += 1;
-                }
-            }
-
-            // Apply discounts for each product after loading basket
-            foreach (KeyValuePair<string, ScannedProduct> entry in productMap)
-            {
-                Product product = entry.Value.Product;
-                int quantity = entry.Value.Quantity;
-                total += CalculateProductCost(product, quantity);
+                total = ScanProduct(productMap, ch);
             }
 
             return Math.Round(total, 2);
         }
 
-        private double CalculateProductCost(Product product, int quantity)
+        // Scan products in basket
+        // Ignores any invalid/unrecognised products
+        public double ScanProduct(Dictionary<string, ScannedProduct> productMap, char ch)
+        {
+            string productName = ch.ToString();
+            if (productMap.ContainsKey(productName))
+            {
+                productMap[productName].Quantity += 1;
+            }
+
+            // Apply discounts(if applicable) for each product after loading basket
+            double total = 0;
+            foreach (KeyValuePair<string, ScannedProduct> entry in productMap)
+            {
+                Product product = entry.Value.Product;
+                int quantity = entry.Value.Quantity;
+                total += CalculateCost(product, quantity);
+            }
+
+            return total;
+        }
+
+        private double CalculateCost(Product product, int quantity)
         {
             if (quantity <= 0) return 0;
 

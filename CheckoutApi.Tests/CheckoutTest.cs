@@ -1,8 +1,8 @@
 ﻿using Xunit;
-using Moq;
-using CheckoutApi.Service;
-using CheckoutApi.Repositories;
 using CheckoutApi.Models;
+using CheckoutApi.Repositories;
+using CheckoutApi.Service;
+using Moq;
 namespace CheckoutApi.Tests;
 
 public class CheckoutTest
@@ -47,16 +47,20 @@ public class CheckoutTest
         };
     }
 
-    // Helper function to call CheckoutProducts function
     private async Task<double> Price(string basket)
     {
         return await _service.CheckoutProducts(basket);
     }
 
+    private double Scan(Dictionary<string, ScannedProduct> productMap, char ch)
+    {
+        return _service.ScanProduct(productMap, ch);
+    }
+
     [Fact]
     public async Task TestTotals()
     {
-        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(GetTestProducts());
+        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(GetTestProducts()); // Generate pricing rules
 
         Assert.Equal(0, await Price(""));
         Assert.Equal(50, await Price("A"));
@@ -76,16 +80,22 @@ public class CheckoutTest
     }
 
     [Fact]
-    public async Task TestIncremental()
+    public void TestIncremental()
     {
-        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(GetTestProducts());
-        var scanned = "";
+        double total = 0;
+        Dictionary<string, ScannedProduct> productMap = GetTestProducts().ToDictionary(
+            product => product.ProductName,
+            product => new ScannedProduct
+            {
+                Quantity = 0,
+                Product = product
+            });
 
-        Assert.Equal(0 , await Price(scanned));
-        scanned += "A"; Assert.Equal(50, await Price(scanned));
-        scanned += "B"; Assert.Equal(80, await Price(scanned));
-        scanned += "A"; Assert.Equal(130, await Price(scanned));
-        scanned += "A"; Assert.Equal(160, await Price(scanned));
-        scanned += "B"; Assert.Equal(175, await Price(scanned));
+        Assert.Equal(0, total);
+        total = Scan(productMap, 'A');  Assert.Equal(50, total);
+        total = Scan(productMap, 'B');  Assert.Equal(80, total);
+        total = Scan(productMap, 'A');  Assert.Equal(130, total);
+        total = Scan(productMap, 'A');  Assert.Equal(160, total);
+        total = Scan(productMap, 'B');  Assert.Equal(175, total);
     }
 }
