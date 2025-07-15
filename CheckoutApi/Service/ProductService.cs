@@ -41,6 +41,7 @@ namespace CheckoutApi.Service
             return _repository.Exists(id);
         }
 
+
         // Generates total cost of basket based on existence of discounts for each product in basket
         public async Task<double> CheckoutProducts(string basket)
         {
@@ -79,31 +80,31 @@ namespace CheckoutApi.Service
             foreach (KeyValuePair<string, ScannedProduct> entry in productMap)
             {
                 Product product = entry.Value.Product;
-                int quantity = entry.Value.Quantity;
-                total += CalculateCost(product, quantity);
+                int qty = entry.Value.Quantity;
+                total += CalculateCost(product, qty);
             }
 
             return Math.Round(total, 2);
         }
 
-        private double CalculateCost(Product product, int quantity)
+        // Calculate cost of products scanned, applies discounts if defined
+        private double CalculateCost(Product product, int qty)
         {
-            if (quantity <= 0) return 0;
+            if (qty <= 0) return 0;
 
             var activeDiscount = product.DiscountQuantity.HasValue && product.DiscountPrice.HasValue;
             if (activeDiscount) 
             {
-                // Guaranteed to have values as activeDiscount will be checking to enter this code block
-                int discountQuantity = product.DiscountQuantity!.Value;
+                int discountQuantity = product.DiscountQuantity!.Value; // Guaranteed to have values as activeDiscount will be checking to enter this code block
                 double discountPrice = product.DiscountPrice!.Value;
 
-                int discountedSets = quantity / discountQuantity;
-                int remainder = quantity % discountQuantity;
+                int discountedSets = qty / discountQuantity;
+                int remainder = qty % discountQuantity;
 
                 return (discountedSets * discountPrice) + (remainder * product.UnitPrice);
             } else
             {
-                return quantity * product.UnitPrice;
+                return qty * product.UnitPrice;
             }
         }
     }
