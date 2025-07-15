@@ -62,11 +62,11 @@ namespace CheckoutApi.Service
                 total = ScanProduct(productMap, ch);
             }
 
-            return Math.Round(total, 2);
+            return total;
         }
 
-        // Scan products in basket
-        // Ignores any invalid/unrecognised products
+        // Scan products in basket - Ignores any invalid/unrecognised entries
+        // Apply discount for each product after incrementally scanning item
         public double ScanProduct(Dictionary<string, ScannedProduct> productMap, char ch)
         {
             string productName = ch.ToString();
@@ -75,7 +75,6 @@ namespace CheckoutApi.Service
                 productMap[productName].Quantity += 1;
             }
 
-            // Apply discounts(if applicable) for each product after loading basket
             double total = 0;
             foreach (KeyValuePair<string, ScannedProduct> entry in productMap)
             {
@@ -84,7 +83,7 @@ namespace CheckoutApi.Service
                 total += CalculateCost(product, quantity);
             }
 
-            return total;
+            return Math.Round(total, 2);
         }
 
         private double CalculateCost(Product product, int quantity)
@@ -92,7 +91,7 @@ namespace CheckoutApi.Service
             if (quantity <= 0) return 0;
 
             var activeDiscount = product.DiscountQuantity.HasValue && product.DiscountPrice.HasValue;
-            if (activeDiscount)
+            if (activeDiscount) 
             {
                 // Guaranteed to have values as activeDiscount will be checking to enter this code block
                 int discountQuantity = product.DiscountQuantity!.Value;
